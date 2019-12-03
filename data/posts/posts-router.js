@@ -102,12 +102,18 @@ router.put('/:id', (req, res)=>{
 //POST POST
 
 router.post('/', (req, res)=>{
-    const postAcquireId = req.body
+    let postAcquireId = req.body
 
+    if(
+        (postAcquireId.hasOwnProperty('title') && postAcquireId.hasOwnProperty('contents'))
+         && (postAcquireId.contents !== null && postAcquireId.title !== null))
+         {
+            postAcquireId = req.body
 
     Posts.insert(postAcquireId)
     .then(id => {
-        res.status(200).json(id)
+       const newPost = Object.assign({}, id, postAcquireId)
+        res.status(201).json(newPost)
     //     const createdPost = (id) => Posts.findById(id).then(post => {
     //         res.status(200).json(post)
     //     })
@@ -117,7 +123,12 @@ router.post('/', (req, res)=>{
         console.log("This is POST POST error", err)
         res.status(500).json({error: "Error creating post"})
     })
+
+}else{
+    res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+}
 })
+
 
 
 //POST SUBROUTE: COMMENTS
