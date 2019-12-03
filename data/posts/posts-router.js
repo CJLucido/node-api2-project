@@ -87,25 +87,30 @@ router.delete("/:id", (req,res)=>{
 })
 
 
-//PUT POST BY ID
+//PUT POST BY ID X'd
 
 router.put('/:id', (req, res)=>{
     const postId = req.params.id
     const updata = req.body
 
+
+    //(updata.title.length > 0 && updata.contents.length > 0) && //wont work because i cant have a null value and check for length
+    if((updata.title !== null && updata.contents !== null) && (updata.title !== undefined && updata.contents !== undefined)){
     Posts.update(postId, updata)
     .then(updateCount => {
         if(updateCount > 0) {
             res.status(200).json({message: `update to post ${postId} successful`})
         }else{
-            res.status(404).json({error: `could not find post${postId}, not updated`})
+            res.status(404).json({error: `The post with the specified ID does not exist; could not find post${postId}, not updated`})
         }
     })
     .catch(err => {
         console.log("This is PUT POST error", err)
-        res.status(500).json({error:"Error updating, server-side"})
+        res.status(500).json({error:"The post information could not be modified; Error updating, server-side"})
     })
-
+}else{
+    res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+}
 })
 
 //POST POST X'd
