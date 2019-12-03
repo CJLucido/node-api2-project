@@ -99,7 +99,25 @@ router.put('/:id', (req, res)=>{
 
 })
 
+//POST POST
 
+router.post('/', (req, res)=>{
+    const postAcquireId = req.body
+
+
+    Posts.insert(postAcquireId)
+    .then(id => {
+        res.status(200).json(id)
+    //     const createdPost = (id) => Posts.findById(id).then(post => {
+    //         res.status(200).json(post)
+    //     })
+    //    createdPost(id) //returns empty array before the database can give it the post object
+    })
+    .catch(err => {
+        console.log("This is POST POST error", err)
+        res.status(500).json({error: "Error creating post"})
+    })
+})
 
 
 
