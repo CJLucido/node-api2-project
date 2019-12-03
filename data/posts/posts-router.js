@@ -16,6 +16,7 @@ router.get("/", (req, res)=>{
     })
     .catch(err => {
         console.log("This is GET ALL error", err)
+        res.status(500).json({error: "Error retrieving posts"})
     })
 })
 
@@ -31,11 +32,25 @@ router.get("/:id", (req, res) => {
     })
     .catch(err => {
         console.log("This is GET POST ID error", err)
+        res.status(500).json({error: "Error retrieving post by id"})
     })
 })
 
+//GET SUBROUTE COMMENTS
 
 
+router.get("/:id/comments", (req,res)=>{
+    const postId = req.params.id
+
+    Posts.findPostComments(postId)
+    .then(comments => {
+        res.status(200).json(comments)
+    })
+    .catch(err => {
+        console.log("This is GET POST'S COMMENTS error", err)
+        res.status(500).json({error: "Error retrieving post's comments"})
+    })
+})
 
 
 
