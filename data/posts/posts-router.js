@@ -7,7 +7,7 @@ const router = express.Router()
 router.use(express.json())
 
 //GETS
-//ALL
+//ALL X'd
 
 router.get("/", (req, res)=>{
     Posts.find()
@@ -16,23 +16,29 @@ router.get("/", (req, res)=>{
     })
     .catch(err => {
         console.log("This is GET ALL error", err)
-        res.status(500).json({error: "Error retrieving posts"})
+        res.status(500).json({error: "The posts information could not be retrieved."})
     })
 })
 
-//BY POST ID
+//BY POST ID X'd
 
 
 router.get("/:id", (req, res) => {
     const id = req.params.id
 
+
     Posts.findById(id)
     .then(post => {
-        res.status(200).json(post)
+        if(post.length < 1){
+            res.status(404).json({message: "The post with the specified ID does not exist."})
+        }else{
+            res.status(200).json(post)
+        }
+        
     })
     .catch(err => {
         console.log("This is GET POST ID error", err)
-        res.status(500).json({error: "Error retrieving post by id"})
+        res.status(500).json({error: "The post information could not be retrieved;Error retrieving post by id"})
     })
 })
 
@@ -99,7 +105,7 @@ router.put('/:id', (req, res)=>{
 
 })
 
-//POST POST
+//POST POST X'd
 
 router.post('/', (req, res)=>{
     let postAcquireId = req.body
@@ -117,7 +123,9 @@ router.post('/', (req, res)=>{
     //     const createdPost = (id) => Posts.findById(id).then(post => {
     //         res.status(200).json(post)
     //     })
-    //    createdPost(id) //returns empty array before the database can give it the post object
+    //    createdPost(id) //returns empty array before the database can give it the post object 
+
+    //returning the id lets me know that it was successful anyway so a new object from assignment of incoming and outgoing is the equivalent of the returned post 
     })
     .catch(err => {
         console.log("This is POST POST error", err)
@@ -134,23 +142,45 @@ router.post('/', (req, res)=>{
 //POST SUBROUTE: COMMENTS
 
 router.post('/:id/comments', (req, res)=>{
-    const commentBody = req.body
+    let commentBody = req.body
+
+    let matchingPost = Posts.find().find(post => post.id)
+
+    let foundId = true
+
+    if(matchingPost.id === commentBody.post_id){
+         foundId = true
+    }else{
+         foundId =false
+    }
+
+    if(
+        (commentBody.hasOwnProperty('text') && commentBody.hasOwnProperty('post_id'))
+         && (commentBody.text !== null && commentBody.post_id !== null))
+         {
+            commentBody = req.body
 
     Posts.insertComment(commentBody)
     .then(commentNewId => {
-        console.log("comment", commentNewId)
-        if(commentNewId){
-            res.status(200).json(commentNewId)
-        }else{
-            res.status(404).json({error: "Post Id not found for commenting"})
-        }
-
+       
+            res.status(201).json(commentNewId)
+       
             
     })
     .catch(err => {
         console.log("This is POST COMMENT error", err)
-        res.status(500).json({error:"Error commenting, server-side"})
+        res.status(500).json({error:"There was an error while saving the comment to the database; Error commenting, server-side"})
     })
+
+}else if (commentBody.hasOwnProperty('post_id') && //commentBody.post_id !== null
+
+foundId === true
+) {
+    res.status(400).json({ errorMessage: "Please provide text for the comment." })
+}else{
+    res.status(404).json({message: "Post Id not found for commenting, The post with the specified ID does not exist."})
+}
+
 
 })
 
