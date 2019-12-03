@@ -42,7 +42,7 @@ router.get("/:id", (req, res) => {
     })
 })
 
-//GET SUBROUTE COMMENTS
+//GET SUBROUTE COMMENTS X'd
 
 
 router.get("/:id/comments", (req,res)=>{
@@ -50,11 +50,16 @@ router.get("/:id/comments", (req,res)=>{
  
     Posts.findPostComments(postId)
     .then(comments => {
-        res.status(200).json(comments)
+        if(comments.length < 1){
+            res.status(404).json({message: "The post with the specified ID does not exist."})
+        }else{
+            res.status(200).json(comments)
+        }
+        
     })
     .catch(err => {
         console.log("This is GET POST'S COMMENTS error", err)
-        res.status(500).json({error: "Error retrieving post's comments"})
+        res.status(500).json({error: "The comments information could not be retrieved; Error retrieving post's comments"})
     })
 })
 
