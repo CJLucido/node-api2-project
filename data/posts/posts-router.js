@@ -120,15 +120,28 @@ router.post('/', (req, res)=>{
 })
 
 
+//POST SUBROUTE: COMMENTS
 
+router.post('/:id/comments', (req, res)=>{
+    const commentBody = req.body
 
+    Posts.insertComment(commentBody)
+    .then(commentNewId => {
+        console.log("comment", commentNewId)
+        if(commentNewId){
+            res.status(200).json(commentNewId)
+        }else{
+            res.status(404).json({error: "Post Id not found for commenting"})
+        }
 
+            
+    })
+    .catch(err => {
+        console.log("This is POST COMMENT error", err)
+        res.status(500).json({error:"Error commenting, server-side"})
+    })
 
-
-
-
-////SUBROUTES: COMMENTS
-
+})
 
 
 
