@@ -63,28 +63,26 @@ router.get("/:id/comments", (req,res)=>{
     })
 })
 
-//DELETE POSTS BY ID
+//DELETE POSTS BY ID X'd
 
 router.delete("/:id", (req,res)=>{
     const postId = req.params.id
-    const delPost = Posts.findById(postId).then(post => {
-        res.status(200).json(post)
-    }).catch(err => {
-        console.log("This is GET POST ID error in DEL", err)
-        res.status(500).json({error: "Error retrieving post by id during DEL, server-side"})
-    })
+    //  const delPost = Posts.findById(postId).then(post => {
+        
+    //  })
 
     Posts.remove(postId)
     .then(delPostCount => {
-        if(delPostCount > 0){
-            delPost
+        if(delPostCount < 1){
+           
+            res.status(404).json({message: "The post with the specified ID does not exist.; Post not found"})
         }else{
-            res.status(404).json({message: "Post not found"})
+            res.sendStatus(200)
         }
     })
     .catch(err => {
         console.log("This is DELETE POST error", err)
-        res.status(500).json({error: "Error deleting, server-side"})
+        res.status(500).json({error: "The post could not be removed; Error deleting, server-side"})
     })
 })
 
