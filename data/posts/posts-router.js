@@ -19,7 +19,20 @@ router.get("/", (req, res)=>{
     })
 })
 
+//BY POST ID
 
+
+router.get("/:id", (req, res) => {
+    const id = req.params.id
+
+    Posts.findById(id)
+    .then(post => {
+        res.status(200).json(post)
+    })
+    .catch(err => {
+        console.log("This is GET POST ID error", err)
+    })
+})
 
 
 
