@@ -60,7 +60,7 @@ router.delete("/:id", (req,res)=>{
         res.status(200).json(post)
     }).catch(err => {
         console.log("This is GET POST ID error in DEL", err)
-        res.status(500).json({error: "Error retrieving post by id during DEL"})
+        res.status(500).json({error: "Error retrieving post by id during DEL, server-side"})
     })
 
     Posts.remove(postId)
@@ -73,12 +73,31 @@ router.delete("/:id", (req,res)=>{
     })
     .catch(err => {
         console.log("This is DELETE POST error", err)
-        res.status(500).json({error: "Error deleting"})
+        res.status(500).json({error: "Error deleting, server-side"})
     })
 })
 
 
+//PUT POST BY ID
 
+router.put('/:id', (req, res)=>{
+    const postId = req.params.id
+    const updata = req.body
+
+    Posts.update(postId, updata)
+    .then(updateCount => {
+        if(updateCount > 0) {
+            res.status(200).json({message: `update to post ${postId} successful`})
+        }else{
+            res.status(404).json({error: `could not find post${postId}, not updated`})
+        }
+    })
+    .catch(err => {
+        console.log("This is PUT POST error", err)
+        res.status(500).json({error:"Error updating, server-side"})
+    })
+
+})
 
 
 
