@@ -6,6 +6,23 @@ const router = express.Router()
 
 router.use(express.json())
 
+//GETS
+//ALL
+
+router.get("/", (req, res)=>{
+    Posts.find()
+    .then(posts => {
+        res.status(200).json(posts)
+    })
+    .catch(err => {
+        console.log("This is GET ALL error", err)
+    })
+})
+
+
+
+
+
 
 
 
