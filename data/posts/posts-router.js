@@ -41,7 +41,7 @@ router.get("/:id", (req, res) => {
 
 router.get("/:id/comments", (req,res)=>{
     const postId = req.params.id
-
+ 
     Posts.findPostComments(postId)
     .then(comments => {
         res.status(200).json(comments)
@@ -49,6 +49,31 @@ router.get("/:id/comments", (req,res)=>{
     .catch(err => {
         console.log("This is GET POST'S COMMENTS error", err)
         res.status(500).json({error: "Error retrieving post's comments"})
+    })
+})
+
+//DELETE POSTS BY ID
+
+router.delete("/:id", (req,res)=>{
+    const postId = req.params.id
+    const delPost = Posts.findById(postId).then(post => {
+        res.status(200).json(post)
+    }).catch(err => {
+        console.log("This is GET POST ID error in DEL", err)
+        res.status(500).json({error: "Error retrieving post by id during DEL"})
+    })
+
+    Posts.remove(postId)
+    .then(delPostCount => {
+        if(delPostCount > 0){
+            delPost
+        }else{
+            res.status(404).json({message: "Post not found"})
+        }
+    })
+    .catch(err => {
+        console.log("This is DELETE POST error", err)
+        res.status(500).json({error: "Error deleting"})
     })
 })
 
